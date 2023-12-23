@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+    <meta charset="UTF-8">
+    <style>
+        a {
+            text-decoration: auto;
+            color: #e9ecef;
+        }
+    </style>
+    <title>Product - New</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <!-- Navbar items -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                {{login}}
+                <li class="nav-item">
+                    <a class="nav-link" href="/products">Products</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/customers">Customers</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    <br>
+    <h1>Add New Product</h1>
+    <hr>
+    <div class="container">
+        <form action="/product/add" method="post" class="col">
+            <div class="mb-3 row">
+                <label for="description" class="form-label">Description</label>
+                <input type="text"
+                       class="form-control"
+                       id="description"
+                       name="description"
+                       placeholder="Enter Description">
+            </div>
+            <div class="mb-3 row">
+                <label for="price" class="form-label">Price</label>
+                <input type="text"
+                       class="form-control"
+                       id="price"
+                       name="price"
+                       placeholder="Enter Price">
+            </div>
+            <div class="mb-3 row">
+                <label for="category" class="form-label">Category</label>
+                <input type="text"
+                       class="form-control"
+                       id="category"
+                       name="category"
+                       placeholder="Enter Category">
+            </div>
+            <div class="row">
+                <div class="row mb-3">
+                    <div class="col">
+                        <button type="submit" class="btn btn-lg btn-success">Save</button>
+                    </div>
+                    <div class="col">
+                        <a href="/products" class="btn btn-lg btn-primary">Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

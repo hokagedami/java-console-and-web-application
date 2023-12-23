@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+    <meta charset="UTF-8">
+    <title>Products - List</title>
+    <style>
+        a {
+            text-decoration: auto;
+            color: #e9ecef;
+        }
+
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <!-- Navbar items -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                {{login}}
+                <li class="nav-item">
+                    <a class="nav-link" href="/products">Products</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/customers">Customers</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Shopping Cart Icon with Item Count -->
+        <div class="d-flex" style="visibility: visible">
+            <a href="/cart" class="btn btn-outline-primary mx-2">
+<!--                <img src="/bootstrap/shopping-cart-solid.svg" alt="Shopping Cart Icon" width="30" height="30">-->
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
+                     class="bi bi-cart" viewBox="0 0 16 16">
+                    <path
+                            d="M0 0h1v1H0V0zm1 1h14l1 4H1L0 1zm1 5h12l-1 6.82a1 1 0 0 1-.99.18L11 13H5l-1-5zm2 .45A3.001 3.001 0 0 0 8 14a3.001 3.001 0 0 0 3-2.55L13 6H6l1 4.45z" />
+                </svg>
+                <span id="cartItemCount" class="badge bg-danger" style="height: auto">{{cartSize}}</span>
+            </a>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    <h1>Products</h1>
+    <hr>
+<!--    search form and filter check boxes -->
+    <div class="row align-content-center ms-5 me-5">
+        <div class="col">
+            <form action="/products" method="post">
+                <div class="input-group mb-3">
+                    <label for="search"></label>
+                    <input type="text"
+                           class="form-control"
+                           id="search"
+                           name="search"
+                           placeholder="Search for products with description">
+                    <input type="hidden"
+                           class="form-control"
+                           name="post"
+                           value="search">
+                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+                </div>
+            </form>
+        </div>
+        <div class="col">
+            <form action="/products" method="post">
+                <div class="input-group mb-3 bg-white rounded">
+                    <input class="form-control dropdown-toggle"
+                           data-bs-auto-close="outside"
+                           type="button"
+                           data-bs-toggle="dropdown"
+                           aria-expanded="false"
+                           id="filter"
+                           value="Select Category">
+                    <ul class="dropdown-menu">
+                        {{filters}}
+                    </ul>
+                    <input type="hidden"
+                           class="form-control"
+                           name="post"
+                           value="filter">
+                    <label for="filter"></label>
+                    <button class="btn btn-outline-secondary" type="submit">Filter</button>
+                </div>
+            </form>
+        </div>
+        <div class="col">
+            <a href="/products" class="btn btn-danger">
+                <button class="btn btn-close" type="reset"></button>
+                <span>Reset Search/Filter</span>
+            </a>
+        </div>
+    </div>
+    <hr>
+    <div class="container">
+        <table class="table table-hover">
+            {{productList}}
+        </table>
+        <br>
+        {{add_button}}
+    </div>
+</div>
+<script src="/bootstrap/js/jquery-3.7.1.min.js"></script>
+<script src="/bootstrap/js/bootstrap.bundle.js"></script>
+<script>
+<!--    -->
+</script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+    <meta charset="UTF-8">
+    <style>
+        a {
+            text-decoration: auto;
+            color: #e9ecef;
+        }
+    </style>
+    <title>Customer - Edit</title>
+</head>
+<body>
+<div class="container">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <!-- Navbar items -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    {{login}}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/products">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/customers">Customers</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <h1>Edit Customer</h1>
+    <div class="container">
+        <form action="/customers/update" method="post">
+
+            <!-- Hidden input element for id-->
+            <div class="mb-3">
+<!--                <label for="{{id}}" class="form-label">Id</label>-->
+                <input type="hidden"
+                       class="form-control"
+                       id="{{id}}"
+                       name="id"
+                       value="{{id}}">
+            </div>
+
+            <div class="mb-3">
+                <label for="businessName" class="form-label">Business Name</label>
+                <input type="text"
+                       class="form-control"
+                       id="businessName"
+                       name="businessName"
+                       value="{{businessName}}"
+                       placeholder="Enter Business Name">
+            </div>
+            <div class="mb-3">
+                <label for="addressLine1" class="form-label">Address Line 1</label>
+                <input type="text"
+                       class="form-control"
+                       id="addressLine1"
+                       name="addressLine1"
+                       value="{{addressLine1}}"
+                       placeholder="Enter Address 1">
+            </div>
+            <div class="mb-3">
+                <label for="addressLine2" class="form-label">Address Line 2</label>
+                <input type="text"
+                       class="form-control"
+                       id="addressLine2"
+                       name="addressLine2"
+                       value="{{addressLine2}}"
+                       placeholder="Enter Address 3">
+            </div>
+            <div class="mb-3">
+                <label for="addressLine3" class="form-label">Address Line 3</label>
+                <input type="text"
+                       class="form-control"
+                       id="addressLine3"
+                       name="addressLine3"
+                       value="{{addressLine3}}"
+                       placeholder="Enter Address 3">
+            </div>
+            <div class="mb-3">
+                <label for="postCode" class="form-label">Post Code</label>
+                <input type="text"
+                       class="form-control"
+                       id="postCode"
+                       name="postCode"
+                       value="{{postCode}}"
+                       placeholder="Enter Post Code">
+            </div>
+            <div class="mb-3">
+                <label for="country" class="form-label">Country</label>
+                <input type="text"
+                       class="form-control"
+                       id="country"
+                       name="country"
+                       value="{{country}}"
+                       placeholder="Enter Country">
+            </div>
+            <div class="mb-3">
+                <label for="phone" class="form-label">Telephone</label>
+                <input type="text"
+                       class="form-control"
+                       id="phone"
+                       name="phone"
+                       value="{{telephone}}"
+                       placeholder="Enter phone">
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

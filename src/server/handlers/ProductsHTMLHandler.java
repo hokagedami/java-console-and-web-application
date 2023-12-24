@@ -146,14 +146,19 @@ public class ProductsHTMLHandler implements HttpHandler {
                         }
                     }
                     // get cart from database using sessionId
-                    var cart = sessionDao.getCartItemsIdBySessionId(cookie.split("=")[1]);
-                    if(!cart.isEmpty()) {
-                        var cartSplit = cart.split(",");
-                        // replace {{cartSize}} with cart size
-                        response = response.replace("{{cartSize}}", String.valueOf(cartSplit.length));
+                    if(!VerifyUserIsAdmin(exchange)){
+                        var cart = sessionDao.getCartItemsIdBySessionId(cookie.split("=")[1]);
+                        if(!cart.isEmpty()) {
+                            var cartSplit = cart.split(",");
+                            // replace {{cartSize}} with cart size
+                            response = response.replace("{{cartSize}}", String.valueOf(cartSplit.length));
+                        }
+                        else {
+                            // replace {{cartSize}} with cart size
+                            response = response.replace("{{cartSize}}", String.valueOf(0));
+                        }
                     }
                     else {
-                        // replace {{cartSize}} with cart size
                         response = response.replace("{{cartSize}}", String.valueOf(0));
                     }
                 }
@@ -183,6 +188,7 @@ public class ProductsHTMLHandler implements HttpHandler {
                             }
                             return;
                         }
+                        response = response.replace("{{cartSize}}", String.valueOf(0));
                         exchange.getResponseHeaders().add("Set-Cookie", "sessionId=" + sessionId);
                     }
                 }

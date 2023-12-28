@@ -4,6 +4,7 @@ import database.Migration;
 import models.Product;
 import models.ProductToUpdate;
 
+import java.sql.Date;
 import java.util.Scanner;
 
 /**
@@ -88,7 +89,23 @@ public class ProductConsoleHelper {
         String category = sc.nextLine();
         System.out.print("Enter product price: ");
         int price = sc.nextInt();
-        Product product = new Product(description, category, price);
+        // if price is not a number, ask the user to re-enter the price
+        while (price == 0) {
+            System.out.println("Invalid price entered.");
+            System.out.print("Enter product price: ");
+            price = sc.nextInt();
+        }
+        System.out.print("Enter product expiry date (yyyy-mm-dd): ");
+        String expiryDateStr = sc.next();
+        Date expiryDate = Date.valueOf(expiryDateStr);
+        // if date is not in the correct format, ask the user to re-enter the date
+        while (expiryDate == null) {
+            System.out.println("Invalid date format");
+            System.out.print("Enter product expiry date (yyyy-mm-dd): ");
+            expiryDateStr = sc.next();
+            expiryDate = Date.valueOf(expiryDateStr);
+        }
+        Product product = new Product(description, category, price, expiryDate);
         var addedProduct = productDAO.addProduct(product);
         if (addedProduct != null) {
             System.out.printf("Product={id=%s, SKU=%s, description=%s, category=%s, price=%s}%n",
@@ -130,9 +147,9 @@ public class ProductConsoleHelper {
         var product = productDAO.findProduct(id);
         if (product != null) {
             System.out.println("Updating product...");
-            System.out.printf("Product={id=%s, SKU=%s, description=%s, category=%s, price=%s}%n",
+            System.out.printf("Product={id=%s, SKU=%s, description=%s, category=%s, price=%s, expiry=%s}%n",
                     product.getId(), product.getSKU(), product.getDescription(),
-                    product.getCategory(), product.getPrice());
+                    product.getCategory(), product.getPrice(), product.getExpiryDate());
             System.out.print("Enter new product description: ");
             String description = sc.nextLine();
             System.out.print("Enter new product category: ");
@@ -150,8 +167,18 @@ public class ProductConsoleHelper {
                 }
             }
             while (price == 0);
+            System.out.print("Enter new product expiry date (yyyy-mm-dd): ");
+            String expiryDateStr = sc.next();
+            Date expiryDate = Date.valueOf(expiryDateStr);
+            // if date is not in the correct format, ask the user to re-enter the date
+            while (expiryDate == null) {
+                System.out.println("Invalid date format");
+                System.out.print("Enter product expiry date (yyyy-mm-dd): ");
+                expiryDateStr = sc.next();
+                expiryDate = Date.valueOf(expiryDateStr);
+            }
             var updatedProduct = productDAO
-                    .updateProduct(new ProductToUpdate(description, category, price), id);
+                    .updateProduct(new ProductToUpdate(description, category, price, expiryDate), id);
             if (updatedProduct != null) {
                 System.out.println("Product updated successfully");
                 System.out.printf("Product={id=%s, SKU=%s, description=%s, category=%s, price=%s}%n",
@@ -173,9 +200,9 @@ public class ProductConsoleHelper {
         int id = sc.nextInt();
         var product = productDAO.findProduct(id);
         if (product != null) {
-            System.out.printf("Product={id=%s, SKU=%s, description=%s, category=%s, price=%s}%n",
+            System.out.printf("Product={id=%s, SKU=%s, description=%s, category=%s, price=%s, expiry=%s}%n",
                     product.getId(), product.getSKU(), product.getDescription(),
-                    product.getCategory(), product.getPrice());
+                    product.getCategory(), product.getPrice(), product.getExpiryDate());
             System.out.print("Are you sure you want to delete this product? (y/n): ");
             String choice = sc.next();
             if (choice.equalsIgnoreCase("y")) {

@@ -7,6 +7,7 @@ import models.ProductToUpdate;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,11 +16,11 @@ public class ProductTest {
     private ProductDAO productDAO;
     private final List<Product> products = new ArrayList<>(){
         {
-            add(new Product("Test Product 1", "Test Category 1", 100));
-            add(new Product("Test Product 2", "Test Category 1", 200));
-            add(new Product("Test Product 3", "Test Category 2", 300));
-            add(new Product("Test Product 4", "Test Category 2", 400));
-            add(new Product("Test Product 5", "Test Category 3", 500));
+            add(new Product("Test Product 1", "Test Category 1", 100, Date.valueOf("2021-12-12")));
+            add(new Product("Test Product 2", "Test Category 2", 200, Date.valueOf("2021-12-12")));
+            add(new Product("Test Product 3", "Test Category 1", 300, Date.valueOf("2021-12-12")));
+            add(new Product("Test Product 4", "Test Category 2", 400, Date.valueOf("2021-12-12")));
+            add(new Product("Test Product 5", "Test Category 1", 500, Date.valueOf("2021-12-12")));
         }
     };
     @Before
@@ -40,7 +41,7 @@ public class ProductTest {
         String description = "Test Product";
         String category = "Test Category 3";
         int price = 100;
-        productDAO.addProduct(new Product(description, category, price));
+        productDAO.addProduct(new Product(description, category, price, Date.valueOf("2021-12-12")));
         Assert.assertEquals(products.size() + 1, productDAO.findAllProducts().size());
         Assert.assertEquals(description, productDAO.findAllProducts().getLast().getDescription());
     }
@@ -51,7 +52,7 @@ public class ProductTest {
         String category = "Updated Test Category";
         int price = 1500;
         var updatedProduct = productDAO
-                .updateProduct(new ProductToUpdate(description, category, price), product.getId());
+                .updateProduct(new ProductToUpdate(description, category, price, Date.valueOf("2021-12-12")), product.getId());
         Assert.assertEquals(description, updatedProduct.getDescription());
         Assert.assertEquals(category, updatedProduct.getCategory());
         Assert.assertEquals(price, updatedProduct.getPrice());
@@ -79,7 +80,7 @@ public class ProductTest {
     }
     @Test
     public void h_testUpdateInvalidProduct() {
-        Assert.assertNull(productDAO.updateProduct(new ProductToUpdate("Test", "Test", 100), 100));
+        Assert.assertNull(productDAO.updateProduct(new ProductToUpdate("Test", "Test", 100, Date.valueOf("2021-12-12")), 100));
     }
     @Test
     public void i_testDeleteValidProduct() {
@@ -99,7 +100,7 @@ public class ProductTest {
     public void k_testFindProductsByCategory() {
         var products = productDAO
                 .filterProductsByCategories(new ArrayList<>(List.of("Test Category 1", "Test Category 2")));
-        Assert.assertEquals(4, products.size());
+        Assert.assertEquals(5, products.size());
     }
     @Test
     public void k_testFindProductsByInvalidCategories() {

@@ -1,14 +1,18 @@
 package models;
 
+import java.sql.Date;
+
 public class ProductToUpdate {
     private String description;
     private String category;
     private int price;
+    private Date expiryDate;
 
-    public ProductToUpdate(String description, String category, int price) {
+    public ProductToUpdate(String description, String category, int price, Date expiryDate) {
         this.description = description;
         this.category = category;
         this.price = price;
+        this.expiryDate = expiryDate;
     }
 
 
@@ -36,4 +40,11 @@ public class ProductToUpdate {
         this.price = price;
     }
 
+    public Date getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(Date expiryDate) {
+        this.expiryDate = expiryDate;
+    }
 }

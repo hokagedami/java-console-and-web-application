@@ -57,7 +57,8 @@ public class Migration {
                 String sql = "CREATE TABLE IF NOT EXISTS food_products " +
                         "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
                         " description TEXT NOT NULL, category TEXT NOT NULL," +
-                        " price INTEGER NOT NULL, sku TEXT NOT NULL)";
+                        " price INTEGER NOT NULL, sku TEXT NOT NULL UNIQUE," +
+                        " expiry_date DATE NOT NULL)";
 
                 Statement stmt = conn.createStatement();
                 stmt.execute(sql);

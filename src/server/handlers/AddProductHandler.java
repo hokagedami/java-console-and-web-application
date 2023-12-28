@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.sql.Date;
 
 import static server.helpers.HandlerHelpers.VerifyUserIsAdmin;
 
@@ -53,10 +54,11 @@ public class AddProductHandler implements HttpHandler {
             String description = split[0].split("=")[1];
             String priceStr = split[1].split("=")[1];
             String category = split[2].split("=")[1];
+            Date expiryDate = Date.valueOf(split[3].split("=")[1]);
 
-            if(description != null && category != null && priceStr != null) {
+            if(description != null && category != null && priceStr != null && expiryDate != null) {
                 int price = Integer.parseInt(priceStr);
-                productDAO.addProduct(new Product(description, category, price));
+                productDAO.addProduct(new Product(description, category, price, expiryDate));
                 // Redirect to products page
                 exchange.getResponseHeaders().add("Location", "/products");
                 exchange.sendResponseHeaders(302, 0);

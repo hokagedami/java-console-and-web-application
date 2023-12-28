@@ -1,5 +1,6 @@
 package models;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Random;
 
@@ -11,21 +12,24 @@ public class Product {
     String description;
     String category;
     int price;
+    Date expiryDate;
 
-    public Product(String description, String category, int price) {
+    public Product(String description, String category, int price, Date expiryDate) {
         this.description = description;
         this.category = category;
         this.price = price;
         this.SKU = generateSKU();
+        this.expiryDate = expiryDate;
     }
 
 
-    public Product(int id, String SKU, String description, String category, int price) {
+    public Product(int id, String SKU, String description, String category, int price, Date expiryDate) {
         this.id = id;
         this.SKU = SKU;
         this.description = description;
         this.category = category;
         this.price = price;
+        this.expiryDate = expiryDate;
     }
 
     public int getId() {
@@ -46,6 +50,14 @@ public class Product {
 
     public String getSKU() {
         return SKU;
+    }
+
+    public Date getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(Date expiryDate) {
+        this.expiryDate = expiryDate;
     }
 
     private String generateSKU() {

@@ -48,53 +48,49 @@
     <h1>Products</h1>
     <hr>
 <!--    search form and filter check boxes -->
-    <div class="row align-content-center ms-5 me-5">
-        <div class="col">
-            <form action="/products" method="post">
-                <div class="input-group mb-3">
-                    <label for="search"></label>
+    <div class="col align-content-center ms-5 me-5">
+        <form action="/products" method="post">
+            <div class="row">
+                <div class="col input-group mb-3">
+                    <label for="description"></label>
                     <input type="text"
                            class="form-control"
-                           id="search"
-                           name="search"
-                           placeholder="Search for products with description">
-                    <input type="hidden"
-                           class="form-control"
-                           name="post"
-                           value="search">
-                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+                           id="description"
+                           name="description"
+                           placeholder="Search description">
                 </div>
-            </form>
-        </div>
-        <div class="col">
-            <form action="/products" method="post">
-                <div class="input-group mb-3 bg-white rounded">
+                <div class="col input-group mb-3 bg-white rounded">
                     <input class="form-control dropdown-toggle"
                            data-bs-auto-close="outside"
                            type="button"
                            data-bs-toggle="dropdown"
                            aria-expanded="false"
                            id="filter"
-                           value="Select Category">
+                           value="Filter categories">
                     <ul class="dropdown-menu">
                         {{filters}}
                     </ul>
-                    <input type="hidden"
-                           class="form-control"
-                           name="post"
-                           value="filter">
-                    <label for="filter"></label>
-                    <button class="btn btn-outline-secondary" type="submit">Filter</button>
                 </div>
-            </form>
-        </div>
-        <div class="col">
-            <a href="/products" class="btn btn-danger">
-                <button class="btn btn-close" type="reset"></button>
-                <span>Reset Search/Filter</span>
-            </a>
-        </div>
+                <div class="col input-group mb-3">
+                    <label for="date"></label>
+                    <input type="date"
+                           class="form-control"
+                           id="date"
+                           name="date">
+                </div>
+                <div class="col">
+                    <button type="submit" class="btn btn-success">Search/Filter</button>
+                </div>
+                <div class="col">
+                    <a href="/products" class="btn btn-danger">
+                        Clear
+                    </a>
+                </div>
+            </div>
+        </form>
+        {{searchFilterView}}
     </div>
+
     <hr>
     <div class="container">
         <table class="table table-hover">

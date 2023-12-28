@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.sql.Date;
 
 import static server.helpers.HandlerHelpers.VerifyUserIsAdmin;
 
@@ -49,8 +50,9 @@ public class UpdateProductHandler implements HttpHandler {
             String description = split[1].split("=")[1];
             String category = split[2].split("=")[1];
             String priceStr = split[3].split("=")[1];
+            Date expiryDate = Date.valueOf(split[4].split("=")[1]);
 
-            if (idStr != null && description != null && category != null && priceStr != null) {
+            if (idStr != null && description != null && category != null && priceStr != null && expiryDate != null) {
                 int id = Integer.parseInt(idStr);
                 int price = Integer.parseInt(priceStr);
                 // Update product
@@ -59,7 +61,7 @@ public class UpdateProductHandler implements HttpHandler {
                     exchange.sendResponseHeaders(404, 0);
                     return;
                 }
-                productDAO.updateProduct(new ProductToUpdate(description, category, price),
+                productDAO.updateProduct(new ProductToUpdate(description, category, price, expiryDate),
                         id);
                 // Redirect to products page
                 exchange.getResponseHeaders().add("Location", "/products");

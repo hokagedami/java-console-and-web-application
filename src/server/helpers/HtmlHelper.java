@@ -5,6 +5,7 @@ import models.Product;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,7 @@ public class HtmlHelper {
         htmlBuilder.append("<th scope=\"col\">Description</th>\n");
         htmlBuilder.append("<th scope=\"col\">Category</th>\n");
         htmlBuilder.append("<th scope=\"col\">Price</th>\n");
+        htmlBuilder.append("<th scope=\"col\">Expiry Date</th>\n");
         if (isAdmin) {
             htmlBuilder.append("<th scope=\"col\"></th>\n");
             htmlBuilder.append("<th scope=\"col\"></th>\n");
@@ -71,6 +73,7 @@ public class HtmlHelper {
             htmlBuilder.append("<td>").append(item.getDescription()).append("</td>\n");
             htmlBuilder.append("<td>").append(item.getCategory()).append("</td>\n");
             htmlBuilder.append("<td>").append(item.getPrice()).append("</td>\n");
+            htmlBuilder.append("<td>").append(item.getExpiryDate()).append("</td>\n");
 
             // only show delete button if user is admin
             if (isAdmin) {
@@ -143,14 +146,19 @@ public class HtmlHelper {
                         </label>
                         <span>%s</span>
                     </li>""",
-                    "filter_"+categories.indexOf(category),
-                    "filter_"+categories.indexOf(category),
-                    "filter_"+categories.indexOf(category), category, category);
+                    "category_"+categories.indexOf(category),
+                    "category_"+categories.indexOf(category),
+                    "category_"+categories.indexOf(category), category, category);
             htmlBuilder.append(listItem);
         }
         return htmlBuilder.toString();
     }
 
+    /**
+     * This method generates HTML for a list of products in the cart.
+     * @param cartItems HashMap of Product objects and their count
+     * @return String containing the HTML for the list of products in the cart
+     */
     public static String generateCartItemsListHtml(HashMap<Product, Integer> cartItems) {
         StringBuilder htmlBuilder = new StringBuilder();
         htmlBuilder.append("<thead\n>");
@@ -198,5 +206,25 @@ public class HtmlHelper {
         }
         htmlBuilder.append("</tbody\n>");
         return htmlBuilder.toString();
+    }
+
+    public static String generateFilterAndSearchViewHtml(List<String> categories, String description, String expiryDate){
+        String htmlBuilder = "<div class=\"row\">{{description}}{{categories}}{{expiryDate}}</div>";
+        if(categories.isEmpty() && description.isEmpty() && expiryDate == null){
+            return "";
+        }
+        var descriptionHtml = !description.isBlank() && !description.isEmpty() ? "<div class=\"col\">\n" +
+                "<b>Description: </b><p class=\"text-danger\">" + description + "</p>\n" +
+                "</div>\n" : "<div class=\"col\">\n</div>\n";
+        var expiryDateHtml = !expiryDate.isBlank() && !expiryDate.isEmpty() ? "<div class=\"col\">\n" +
+                "<b>Expiry Date: </b><p class=\"text-danger\">" + expiryDate + "</p>\n" +
+                "</div>\n" : "<div class=\"col\">\n</div>\n";
+        var categoriesHtml = !categories.isEmpty() ? "<div class=\"col\">\n" +
+                "<b>Category: </b><p class=\"text-danger\">" + String.join(", ", categories) + "</p>\n" +
+                "</div>\n" : "<div class=\"col\">\n</div>\n";
+        htmlBuilder = htmlBuilder.replace("{{description}}", descriptionHtml);
+        htmlBuilder = htmlBuilder.replace("{{categories}}", categoriesHtml);
+        htmlBuilder = htmlBuilder.replace("{{expiryDate}}", expiryDateHtml);
+        return htmlBuilder;
     }
 }

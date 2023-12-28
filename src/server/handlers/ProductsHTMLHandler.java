@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,6 +53,11 @@ public class ProductsHTMLHandler implements HttpHandler {
                 exchange.sendResponseHeaders(404, 0);
             } else {
                 List<Product> products;
+                System.out.println("Products page html file found");
+                // get response bytes
+                byte[] responseBytes = getBytesFromInputStream(in);
+                // byte array to string
+                String response = new String(responseBytes);
                 // check if request is post
                 if (exchange.getRequestMethod().equals("POST")) {
                     InputStream is = exchange.getRequestBody();
@@ -64,49 +70,44 @@ public class ProductsHTMLHandler implements HttpHandler {
                         exchange.sendResponseHeaders(302, 0);
                         return;
                     }
-                    var postType= split[split.length - 1].split("=")[1];
-                    //remove last element from split
-                    body = body.substring(0, body.lastIndexOf("&"));
-                    switch (postType) {
-                        case "filter":
-                            ArrayList<String> categories = new ArrayList<>();
-                            for(var category : body.split("&")) {
-                                categories.add(category.split("=")[1]);
-                            }
-                            products = productDAO.filterProductsByCategories(categories);
-                            break;
-                        case "search":
-                            var searchSplit = body.split("=");
-                            if(searchSplit.length <= 1) {
-                                // redirect to products page
-                                exchange.getResponseHeaders().add("Location", "/products");
-                                exchange.sendResponseHeaders(302, 0);
-                                return;
-                            }
-                            products = productDAO.findProductsByDescription(searchSplit[1]);
-                            break;
-                        default:
-                            // redirect to products page
-                            exchange.getResponseHeaders().add("Location", "/products");
-                            exchange.sendResponseHeaders(302, 0);
-                            return;
+
+                    ArrayList<String> categories = new ArrayList<>();
+                    for (var sp : split) {
+                        if (sp.contains("category")) {
+                            categories.add(sp.split("=")[1]);
+                        }
                     }
+                    var descriptionBody = Arrays.stream(split).filter(s -> s.contains("description")).findFirst().orElse(null);
+                    var description = descriptionBody != null && descriptionBody.split("=").length > 1
+                            ? descriptionBody.split("=")[1].trim() : null;
+                    var expiryDateBody = Arrays.stream(split).filter(s -> s.contains("date")).findAny().orElse(null);
+                    var expiryDate = expiryDateBody != null && expiryDateBody.split("=").length > 1
+                            ? Date.valueOf(expiryDateBody.split("=")[1]) : null;
+                    if(categories.isEmpty()
+                            && (description == null || description.isEmpty())
+                            && expiryDate == null) {
+                        // redirect to products page
+                        exchange.getResponseHeaders().add("Location", "/products");
+                        exchange.sendResponseHeaders(302, 0);
+                        return;
+                    }
+                    products = productDAO.findProductsBySearchAndFilterParameters(description, categories, expiryDate);
+                    description = description != null ? description : "";
+                    var expiryDateString = expiryDate != null ? expiryDate.toString() : "";
+                    response = response.replace("{{searchFilterView}}",
+                            generateFilterAndSearchViewHtml(categories, description, expiryDateString));
+
                 }
                 else {
                     products = productDAO.findAllProducts();
                 }
-                System.out.println("Products page html file found");
-                // get response bytes
-                byte[] responseBytes = getBytesFromInputStream(in);
-                // byte array to string
-                String response = new String(responseBytes);
+
                 // replace {{productList}} with generated HTML
                 String productListHTML = generateProductListHTML(products, VerifyUserIsAdmin(exchange));
                 String filterHtml = generateProductCategoryCheckboxes(products);
                 response = response.replace("{{filters}}", filterHtml);
                 response = response.replace("{{productList}}", productListHTML);
-                // replace {{login}} with login button if user is not admin
-
+                response = response.replace("{{searchFilterView}}", "");
                 // get sessionId from cookie
                 String cookie = exchange.getRequestHeaders().getFirst("Cookie");
                 if (cookie != null) {

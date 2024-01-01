@@ -53,11 +53,11 @@ public class CustomersHTMLHandler implements HttpHandler {
                 response = response.replace("{{customerList}}", productListHTML);
                 if (!VerifyUserIsAdmin(exchange)) {
                     response = response.replace("{{login}}",
-                            "<li class=\"nav-item\"> <a href=\"/logout\" class=\"nav-link btn btn-outline-success\">Login</a> </li>");
+                            "<li class=\"nav-item\"> <a href=\"/logout\" class=\"nav-link btn btn-success\">Login</a> </li>");
                     response = response.replace("{{add_button}}", "");
                 } else {
                     response = response.replace("{{login}}",
-                            "<li class=\"nav-item\"> <a href=\"/logout\" class=\"nav-link btn btn-outline-danger\">Logout</a> </li>");
+                            "<li class=\"nav-item\"> <a href=\"/logout\" class=\"nav-link btn btn-danger\">Logout</a> </li>");
                     response = response.replace("{{add_button}}",
                             "<a href=\"/customer/new\" class=\"btn btn-secondary \">Add New Customer</a>");
                 }

@@ -70,25 +70,9 @@ public class AddCustomerHandler implements HttpHandler {
             String telephone = telephoneArray.length > 1 ? telephoneArray[1] : "";
 
 
-            // verify user is admin
-            String cookie = exchange.getRequestHeaders().getFirst("Cookie");
-            String[] tokenSplit = cookie.split("=");
-            String token = tokenSplit[1];
-            var decodedTokenBase64 = Base64.getDecoder().decode(token);
-            String decodedToken = new String(decodedTokenBase64);
-            String[] split2 = decodedToken.split(":");
-            String username = split2[0];
-            String password = split2[1];
-            if (!username.equals(admin.username) || !password.equals(admin.password)) {
-                exchange.getResponseHeaders().add("Location", "/admin");
-                exchange.sendResponseHeaders(302, 0);
-                return;
-            }
-
-
             if (!businessName.isBlank() && !addressLine1.isBlank() && !addressLine2.isBlank() &&
                     !addressLine3.isBlank() && !postCode.isBlank() && !country.isBlank() && !telephone.isBlank()) {
-                Address address = new Address(addressLine1, addressLine2, addressLine3, postCode, country);
+                Address address = new Address(addressLine1, addressLine2, addressLine3, country, postCode);
                 Customer customer = new Customer(address, telephone, businessName);
                 this.customerDAO.addCustomer(customer);
                 exchange.getResponseHeaders().add("Location", "/customers");

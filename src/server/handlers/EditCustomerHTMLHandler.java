@@ -7,6 +7,8 @@ import models.Customer;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.Base64;
 
 import static server.helpers.HandlerHelpers.VerifyUserIsAdmin;
 import static server.helpers.HtmlHelper.getBytesFromInputStream;
@@ -57,6 +59,35 @@ public class EditCustomerHTMLHandler implements HttpHandler {
                 byte[] responseBytes = getBytesFromInputStream(in);
                 String response = new String(responseBytes);
 
+                // get error message from cookie
+                String cookie = exchange.getRequestHeaders().getFirst("Cookie");
+                if(cookie != null)
+                {
+                    String[] split = cookie.split(";");
+                    var tokenCookie = Arrays
+                            .stream(split)
+                            .filter(s -> s.contains("errorMessage"))
+                            .findFirst()
+                            .orElse(null);
+                    if(tokenCookie != null){
+                        String encodedError = tokenCookie.split("=")[1];
+                        String errorMessage = new String(Base64.getDecoder().decode(encodedError));
+                        var errorHtml = "<div class=\"alert alert-danger alert-dismissible fade show errorDiv\" role=\"alert\">\n" +
+                                "        <span id=\"errorMessage\">"+ errorMessage +"</span>\n" +
+                                "        <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\" onclick=\"closeErrorDiv()\"></button>\n" +
+                                "    </div>";
+                        response = response.replace("{{errorMessage}}", errorHtml);
+                    }
+                    else
+                    {
+                        response = response.replace("{{errorMessage}}", "");
+
+                    }
+                }
+                else {
+                    response = response.replace("{{errorMessage}}", "");
+                }
+
                 response = response.replace("{{id}}", String.valueOf(customer.getId()));
                 response = response.replace("{{businessName}}", customer.getBusinessName());
                 response = response.replace("{{addressLine1}}", customer.getAddressObject().getAddressLine1());
@@ -67,7 +98,7 @@ public class EditCustomerHTMLHandler implements HttpHandler {
                 response = response.replace("{{telephone}}", customer.getTelephone());
 
                 response = response.replace("{{login}}",
-                        "<li class=\"nav-item\"> <a href=\"/logout\" class=\"nav-link btn btn-outline-danger\">Logout</a> </li>");
+                        "<li class=\"nav-item\"> <a href=\"/logout\" class=\"nav-link btn btn-danger\">Logout</a> </li>");
                 responseBytes = response.getBytes();
                 exchange.sendResponseHeaders(200, responseBytes.length);
                 OutputStream output = exchange.getResponseBody();

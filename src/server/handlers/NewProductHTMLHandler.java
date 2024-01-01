@@ -5,6 +5,7 @@ import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Base64;
 
 import static server.helpers.HandlerHelpers.VerifyUserIsAdmin;
 import static server.helpers.HtmlHelper.getBytesFromInputStream;
@@ -43,7 +44,44 @@ public class NewProductHTMLHandler implements HttpHandler {
                     byte[] responseBytes = getBytesFromInputStream(in);
                     // byte array to string
                     String response = new String(responseBytes);
-                    response = response.replace("{{login}}", "<li class=\"nav-item\"> <a href=\"/logout\" class=\"nav-link btn btn-outline-danger\">Logout</a> </li>");
+
+                    var encodedQuery = exchange.getRequestURI().getQuery();
+                    // decode query
+                    var encodedQueryArray = encodedQuery != null ? encodedQuery.split("=") : null;
+                    var query = encodedQueryArray != null && encodedQueryArray.length > 1
+                            ? new String(Base64.getDecoder().decode(encodedQueryArray[1])) : null;
+                    var queryArray = query != null ? query.split("&") : null;
+                    var errorMessageArray = queryArray != null ? queryArray[0].split("=") : null;
+                    String errorMessage = errorMessageArray != null && errorMessageArray.length > 1
+                            ? errorMessageArray[1] : null;
+                    var descriptionArray = queryArray != null ? queryArray[1].split("=") : null;
+                    String description = descriptionArray != null && descriptionArray.length > 1
+                            ? descriptionArray[1] : "";
+                    var priceArray = queryArray != null ? queryArray[2].split("=") : null;
+                    String price = priceArray != null && priceArray.length > 1
+                            ? priceArray[1] : "";
+                    var categoryArray = queryArray != null ? queryArray[3].split("=") : null;
+                    String category = categoryArray != null && categoryArray.length > 1
+                            ? categoryArray[1] : "";
+                    var expiryDateArray = queryArray != null ? queryArray[4].split("=") : null;
+                    String expiryDate = expiryDateArray != null && expiryDateArray.length > 1
+                            ? expiryDateArray[1] : "";
+                    if (errorMessage != null) {
+                        var errorHtml = "<div class=\"alert alert-danger alert-dismissible fade show errorDiv\" role=\"alert\">\n" +
+                                "        <span id=\"errorMessage\">"+ errorMessage +"</span>\n" +
+                                "        <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\" onclick=\"closeErrorDiv()\"></button>\n" +
+                                "    </div>";
+                        response = response.replace("{{errorMessage}}", errorHtml);
+                    } else {
+                        response = response.replace("{{errorMessage}}", "");
+                    }
+
+                    response = response.replace("{{description}}", description);
+                    response = response.replace("{{price}}", price);
+                    response = response.replace("{{category}}", category);
+                    response = response.replace("{{expiryDate}}", expiryDate);
+
+                    response = response.replace("{{login}}", "<li class=\"nav-item\"> <a href=\"/logout\" class=\"nav-link btn btn-danger\">Logout</a> </li>");
                     responseBytes = response.getBytes();
                     exchange.sendResponseHeaders(200, responseBytes.length);
                     OutputStream output = exchange.getResponseBody();

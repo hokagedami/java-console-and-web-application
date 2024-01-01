@@ -30,7 +30,7 @@ public class Server {
         HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
 
         // Set up context for serving admin.html
-        server.createContext("/", new AdminHandler());
+        server.createContext("/", new ProductsHTMLHandler(productDAO, sessionDAO));
 
         // Set up context for bootstrap files
         server.createContext("/bootstrap", new BootstrapHandler());
@@ -60,6 +60,9 @@ public class Server {
         server.createContext("/customers/update", new UpdateCustomerHandler(customerDAO));
         server.createContext("/customer/add", new AddCustomerHandler(customerDAO));
         server.createContext("/customers/del", new DeleteCustomerHandler(customerDAO));
+
+        // Set up context for serving not found page
+        server.createContext("/not-found", new NotFoundHandler());
 
         // start server
         server.start();

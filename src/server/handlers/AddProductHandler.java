@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
+import java.util.Base64;
 
 import static server.helpers.HandlerHelpers.VerifyUserIsAdmin;
 
@@ -51,12 +52,16 @@ public class AddProductHandler implements HttpHandler {
             // Get username and password from body
             body = URLDecoder.decode(body, StandardCharsets.UTF_8);
             String[] split = body.split("&");
-            String description = split[0].split("=")[1];
-            String priceStr = split[1].split("=")[1];
-            String category = split[2].split("=")[1];
-            Date expiryDate = Date.valueOf(split[3].split("=")[1]);
+            var descriptionArray = split[0].split("=");
+            String description = descriptionArray.length > 1 ? descriptionArray[1] : "";
+            var priceArray = split[1].split("=");
+            String priceStr = priceArray.length > 1 ? priceArray[1] : "";
+            var categoryArray = split[2].split("=");
+            String category = categoryArray.length > 1 ? categoryArray[1] : "";
+            var expiryDateArray = split[3].split("=");
+            Date expiryDate = expiryDateArray.length > 1 ? Date.valueOf(expiryDateArray[1]) : null;
 
-            if(description != null && category != null && priceStr != null && expiryDate != null) {
+            if(!description.isBlank() && !category.isBlank() && !priceStr.isBlank() && expiryDate != null) {
                 int price = Integer.parseInt(priceStr);
                 productDAO.addProduct(new Product(description, category, price, expiryDate));
                 // Redirect to products page
@@ -64,8 +69,17 @@ public class AddProductHandler implements HttpHandler {
                 exchange.sendResponseHeaders(302, 0);
             }
             else {
-                // Redirect to add page
-                exchange.getResponseHeaders().add("Location", "/products/new");
+                // Make request to edit page with error message
+                // encode error message and request parameters
+                var expiryDateStr = expiryDate != null ? expiryDate.toString() : "";
+                var query = "errorMessage=" + "Please fill in all fields" +
+                        "&description=" + description +
+                        "&price=" + priceStr +
+                        "&category=" + category +
+                        "&expiryDate=" + expiryDateStr;
+                var encodedQuery = Base64.getEncoder().encodeToString(query.getBytes());
+                exchange.getResponseHeaders().add("Location",
+                        "/product/new?errorMessage=" + encodedQuery);
                 exchange.sendResponseHeaders(302, 0);
             }
         }

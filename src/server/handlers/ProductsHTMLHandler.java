@@ -197,16 +197,16 @@ public class ProductsHTMLHandler implements HttpHandler {
 
                 if (!VerifyUserIsAdmin(exchange)) {
                     response = response.replace("{{login}}",
-                            "<li class=\"nav-item\"> <a href=\"/logout\" class=\"nav-link btn btn-outline-success\">Login</a> </li>");
-                    response = response.replace("{{add_button}}", "");
+                            "<li class=\"nav-item\"> <a href=\"/logout\" class=\"nav-link btn btn-success\">Login</a> </li>");
+                    response = response.replace("{{addButton}}", "");
                 } else {
                     response = response.replace("visible", "hidden");
                     response = response.replace("{{login}}",
-                            "<li class=\"nav-item\"> <a href=\"/logout\" class=\"nav-link btn btn-outline-danger\">Logout</a> </li>");
-                    response = response.replace("{{add_button}}",
+                            "<li class=\"nav-item\"> <a href=\"/logout\" class=\"nav-link btn btn-danger\">Logout</a> </li>");
+                    response = response.replace("{{addButton}}",
                             "<a href=\"/product/new\" class=\"btn btn-secondary \">Add New Product</a>");
                 }
-                response = response.replace("{{login}}", productListHTML);
+                response = response.replace("{{productList}}", productListHTML);
                 responseBytes = response.getBytes();
 
                 // send response

@@ -63,7 +63,7 @@ public class EditProductHTMLHandler implements HttpHandler {
                 response = response.replace("{{category}}", product.getCategory());
                 response = response.replace("{{price}}", String.valueOf(product.getPrice()));
                 response = response.replace("{{expiry_date}}", String.valueOf(product.getExpiryDate()));
-                response = response.replace("{{login}}", "<li class=\"nav-item\"> <a href=\"/logout\" class=\"nav-link btn btn-outline-danger\">Logout</a> </li>");
+                response = response.replace("{{login}}", "<li class=\"nav-item\"> <a href=\"/logout\" class=\"nav-link btn btn-danger\">Logout</a> </li>");
                 responseBytes = response.getBytes();
                 exchange.sendResponseHeaders(200, responseBytes.length);
                 OutputStream output = exchange.getResponseBody();

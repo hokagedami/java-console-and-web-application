@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 import static server.helpers.HandlerHelpers.VerifyUserIsAdmin;
 
@@ -46,18 +47,26 @@ public class UpdateCustomerHandler implements HttpHandler{
             InputStream is = exchange.getRequestBody();
             String body = new String(is.readAllBytes(), StandardCharsets.UTF_8);
 
-            String[] split = URLDecoder.decode(body, StandardCharsets.UTF_8).split("&");
-            String idStr = split[0].split("=")[1];
-            String businessName = split[1].split("=")[1];
-            String addressLine1 = split[2].split("=")[1];
-            String addressLine2 = split[3].split("=")[1];
-            String addressLine3 = split[4].split("=")[1];
-            String postCode = split[5].split("=")[1];
-            String country = split[6].split("=")[1];
-            String telephone = split[7].split("=")[1];
+            String[] bodyArray = URLDecoder.decode(body, StandardCharsets.UTF_8).split("&");
+            var idArray = bodyArray[0].split("=");
+            String idStr = idArray.length > 1 ? idArray[1] : "";
+            var businessNameArray = bodyArray[1].split("=");
+            String businessName = businessNameArray.length > 1 ? businessNameArray[1] : "";
+            var addressLine1Array = bodyArray[2].split("=");
+            String addressLine1 = addressLine1Array.length > 1 ? addressLine1Array[1] : "";
+            var addressLine2Array = bodyArray[3].split("=");
+            String addressLine2 = addressLine2Array.length > 1 ? addressLine2Array[1] : "";
+            var addressLine3Array = bodyArray[4].split("=");
+            String addressLine3 = addressLine3Array.length > 1 ? addressLine3Array[1] : "";
+            var postCodeArray = bodyArray[5].split("=");
+            String postCode = postCodeArray.length > 1 ? postCodeArray[1] : "";
+            var countryArray = bodyArray[6].split("=");
+            String country = countryArray.length > 1 ? countryArray[1] : "";
+            var telephoneArray = bodyArray[7].split("=");
+            String telephone = telephoneArray.length > 1 ? telephoneArray[1] : "";
 
-            if (idStr != null && businessName != null && addressLine1 != null && addressLine2 != null &&
-                    addressLine3 != null && postCode != null && country != null && telephone != null) {
+            if (!idStr.isBlank() && !businessName.isBlank() && !addressLine1.isBlank() && !addressLine2.isBlank() &&
+                    !addressLine3.isBlank() && !postCode.isBlank() && !country.isBlank() && !telephone.isBlank()) {
                 int id = Integer.parseInt(idStr);
                 Address address = new Address(addressLine1, addressLine2, addressLine3, postCode, country);
                 CustomerToUpdate customer = new CustomerToUpdate(address, telephone, businessName);
@@ -67,6 +76,10 @@ public class UpdateCustomerHandler implements HttpHandler{
             }
             else {
                 // Redirect to edit page
+                var query = "Please fill in all fields!";
+                var encodedQuery = Base64.getEncoder().encodeToString(query.getBytes());
+                // add error message to cookie
+                exchange.getResponseHeaders().add("Set-Cookie", encodedQuery);
                 exchange.getResponseHeaders().add("Location", "/customers/edit/" + idStr);
                 exchange.sendResponseHeaders(302, 0);
             }

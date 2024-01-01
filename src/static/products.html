@@ -11,7 +11,6 @@
             text-decoration: auto;
             color: #e9ecef;
         }
-
     </style>
 </head>
 <body>
@@ -20,13 +19,13 @@
         <!-- Navbar items -->
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
-                {{login}}
                 <li class="nav-item">
-                    <a class="nav-link" href="/products">Products</a>
+                    <a class="nav-link active" href="/products">Products</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/customers">Customers</a>
                 </li>
+                {{login}}
             </ul>
         </div>
 
@@ -44,7 +43,7 @@
         </div>
     </div>
 </nav>
-<div class="container">
+<div class="container-fluid mx-5 my-3" style="width: 80%">
     <h1>Products</h1>
     <hr>
 <!--    search form and filter check boxes -->
@@ -97,11 +96,9 @@
             {{productList}}
         </table>
         <br>
-        {{add_button}}
+        {{addButton}}
     </div>
 </div>
-<script src="/bootstrap/js/jquery-3.7.1.min.js"></script>
-<script src="/bootstrap/js/bootstrap.bundle.js"></script>
 <script>
 <!--    -->
 </script>

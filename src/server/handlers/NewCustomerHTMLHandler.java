@@ -5,8 +5,6 @@ import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 import static server.helpers.HandlerHelpers.VerifyUserIsAdmin;
@@ -84,7 +82,11 @@ public class NewCustomerHTMLHandler implements HttpHandler {
                         ? telephoneArray[1] : "";
                 if (errorMessage != null) {
                     // replace {{errorMessage}} with error message div if there is one
-                    response = response.replace("{{errorMessage}}", "<div class=\"alert alert-danger\" role=\"alert\">" + errorMessage + "</div> <hr>");
+                    var errorHtml = "<div class=\"alert alert-danger alert-dismissible fade show errorDiv\" role=\"alert\">\n" +
+                            "        <span id=\"errorMessage\">"+ errorMessage +"</span>\n" +
+                            "        <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\" onclick=\"closeErrorDiv()\"></button>\n" +
+                            "    </div>";
+                    response = response.replace("{{errorMessage}}", errorHtml);
                 } else {
                     response = response.replace("{{errorMessage}}", "");
                 }

@@ -34,6 +34,12 @@
     <h1>Add New Customer</h1>
     <hr>
     {{errorMessage}}
+    <!--div for error message that has a close button on top right to remove the error message-->
+<!--    <div class="alert alert-danger alert-dismissible fade show errorDiv" role="alert">-->
+<!--        <span id="errorMessage">{{errorMessage}}</span>-->
+<!--        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" onclick="closeErrorDiv()"></button>-->
+<!--    </div>-->
+
     <div class="container">
         <form action="/customer/add" method="post">
             <div class="mb-3">
@@ -346,5 +352,10 @@
         </form>
     </div>
 </div>
+<script>
+    function closeErrorDiv() {
+        document.querySelector('.errorDiv').style.display = 'none';
+    }
+</script>
 </body>
 </html>

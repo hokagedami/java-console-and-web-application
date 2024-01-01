@@ -53,14 +53,21 @@ public class AddCustomerHandler implements HttpHandler {
 
             // Get username and password from body
             body = URLDecoder.decode(body, StandardCharsets.UTF_8);
-            String[] split = body.split("&");
-            String businessName = split[0].split("=")[1];
-            String addressLine1 = split[1].split("=")[1];
-            String addressLine2 = split[2].split("=")[1];
-            String addressLine3 = split[3].split("=")[1];
-            String postCode = split[4].split("=")[1];
-            String country = split[5].split("=")[1];
-            String telephone = split[6].split("=")[1];
+            String[] bodyArray = body.split("&");
+            var businessNameArray = bodyArray[0].split("=");
+            String businessName = businessNameArray.length > 1 ? businessNameArray[1] : "";
+            var addressLine1Array = bodyArray[1].split("=");
+            String addressLine1 = addressLine1Array.length > 1 ? addressLine1Array[1] : "";
+            var addressLine2Array = bodyArray[2].split("=");
+            String addressLine2 = addressLine2Array.length > 1 ? addressLine2Array[1] : "";
+            var addressLine3Array = bodyArray[3].split("=");
+            String addressLine3 = addressLine3Array.length > 1 ? addressLine3Array[1] : "";
+            var postCodeArray = bodyArray[4].split("=");
+            String postCode = postCodeArray.length > 1 ? postCodeArray[1] : "";
+            var countryArray = bodyArray[5].split("=");
+            String country = countryArray.length > 1 ? countryArray[1] : "";
+            var telephoneArray = bodyArray[6].split("=");
+            String telephone = telephoneArray.length > 1 ? telephoneArray[1] : "";
 
 
             // verify user is admin
@@ -79,8 +86,8 @@ public class AddCustomerHandler implements HttpHandler {
             }
 
 
-            if (businessName != null && addressLine1 != null && addressLine2 != null &&
-                    addressLine3 != null && postCode != null && country != null && telephone != null) {
+            if (!businessName.isBlank() && !addressLine1.isBlank() && !addressLine2.isBlank() &&
+                    !addressLine3.isBlank() && !postCode.isBlank() && !country.isBlank() && !telephone.isBlank()) {
                 Address address = new Address(addressLine1, addressLine2, addressLine3, postCode, country);
                 Customer customer = new Customer(address, telephone, businessName);
                 this.customerDAO.addCustomer(customer);
@@ -88,8 +95,19 @@ public class AddCustomerHandler implements HttpHandler {
                 exchange.sendResponseHeaders(302, 0);
             }
             else {
-                // Redirect to edit page
-                exchange.getResponseHeaders().add("Location", "/customers/new");
+                // Make request to edit page with error message
+                // encode error message and request parameters
+                var query = "errorMessage=" + "Please fill in all fields" +
+                        "&businessName=" + businessName +
+                        "&addressLine1=" + addressLine1 +
+                        "&addressLine2=" + addressLine2 +
+                        "&addressLine3=" + addressLine3 +
+                        "&postCode=" + postCode +
+                        "&country=" + country +
+                        "&telephone=" + telephone;
+                var encodedQuery = Base64.getEncoder().encodeToString(query.getBytes());
+                exchange.getResponseHeaders().add("Location",
+                        "/customer/new?errorMessage=" + encodedQuery);
                 exchange.sendResponseHeaders(302, 0);
             }
         }

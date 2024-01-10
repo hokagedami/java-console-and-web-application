@@ -82,8 +82,14 @@ public class NewCustomerHTMLHandler implements HttpHandler {
                         ? telephoneArray[1] : "";
                 if (errorMessage != null) {
                     // replace {{errorMessage}} with error message div if there is one
-                    var errorHtml = "<div class=\"alert alert-danger alert-dismissible fade show errorDiv\" role=\"alert\">\n" +
-                            "        <span id=\"errorMessage\">"+ errorMessage +"</span>\n" +
+                    StringBuilder errorString = new StringBuilder("<ul>\n");
+                    var errorMessages = errorMessage.split("#");
+                    for (String error : errorMessages) {
+                        errorString.append("<li id=errorMessage class=\"col\">").append(error).append("</li>");
+                    }
+                    errorString.append("</ul>");
+                    var errorHtml = "<div class=\"col alert alert-danger alert-dismissible fade show errorDiv\" role=\"alert\">\n" +
+                            "        " + new String(errorString) + "\n" +
                             "        <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\" onclick=\"closeErrorDiv()\"></button>\n" +
                             "    </div>";
                     response = response.replace("{{errorMessage}}", errorHtml);

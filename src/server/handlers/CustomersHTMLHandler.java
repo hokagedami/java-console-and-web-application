@@ -49,8 +49,8 @@ public class CustomersHTMLHandler implements HttpHandler {
                 String response = new String(responseBytes);
                 // replace {{productList}} with generated HTML
                 List<Customer> customers = customerDAO.findAllCustomers();
-                String productListHTML = generateCustomerListHTML(customers, VerifyUserIsAdmin(exchange));
-                response = response.replace("{{customerList}}", productListHTML);
+                String customerListHTML = generateCustomerListHTML(customers, VerifyUserIsAdmin(exchange));
+                response = response.replace("{{customerList}}", customerListHTML);
                 if (!VerifyUserIsAdmin(exchange)) {
                     response = response.replace("{{login}}",
                             "<li class=\"nav-item\"> <a href=\"/logout\" class=\"nav-link btn btn-success\">Login</a> </li>");

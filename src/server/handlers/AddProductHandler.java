@@ -4,14 +4,15 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import methods.products.ProductDAO;
 import models.Product;
-import models.User;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 import static server.helpers.HandlerHelpers.VerifyUserIsAdmin;
 
@@ -21,7 +22,6 @@ import static server.helpers.HandlerHelpers.VerifyUserIsAdmin;
  * Only valid for Admin users. Redirects to /admin for login if user is not admin.
  */
 public class AddProductHandler implements HttpHandler {
-    User admin = new User("admin", "admin");
     ProductDAO productDAO;
 
     /**
@@ -61,27 +61,38 @@ public class AddProductHandler implements HttpHandler {
             var expiryDateArray = split[3].split("=");
             Date expiryDate = expiryDateArray.length > 1 ? Date.valueOf(expiryDateArray[1]) : null;
 
-            if(!description.isBlank() && !category.isBlank() && !priceStr.isBlank() && expiryDate != null) {
-                int price = Integer.parseInt(priceStr);
-                productDAO.addProduct(new Product(description, category, price, expiryDate));
-                // Redirect to products page
-                exchange.getResponseHeaders().add("Location", "/products");
-                exchange.sendResponseHeaders(302, 0);
+            List<String> errors = new ArrayList<>();
+
+            if (description.isBlank()) {
+                errors.add("Description is required");
             }
-            else {
-                // Make request to edit page with error message
-                // encode error message and request parameters
-                var expiryDateStr = expiryDate != null ? expiryDate.toString() : "";
-                var query = "errorMessage=" + "Please fill in all fields" +
+            if (priceStr.isBlank()) {
+                errors.add("Price is required");
+            }
+            if (category.isBlank()) {
+                errors.add("Category is required");
+            }
+            if (expiryDate == null) {
+                errors.add("Expiry date is required");
+            }
+
+            if (!errors.isEmpty()){
+                var query = "errorMessage=" + String.join("#", errors) +
                         "&description=" + description +
                         "&price=" + priceStr +
                         "&category=" + category +
-                        "&expiryDate=" + expiryDateStr;
+                        "&expiryDate=" + expiryDate;
                 var encodedQuery = Base64.getEncoder().encodeToString(query.getBytes());
                 exchange.getResponseHeaders().add("Location",
                         "/product/new?errorMessage=" + encodedQuery);
                 exchange.sendResponseHeaders(302, 0);
+                return;
             }
+            int price = Integer.parseInt(priceStr);
+            productDAO.addProduct(new Product(description, category, price, expiryDate));
+            // Redirect to products page
+            exchange.getResponseHeaders().add("Location", "/products");
+            exchange.sendResponseHeaders(302, 0);
         }
     }
 }

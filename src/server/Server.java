@@ -64,7 +64,7 @@ public class Server {
         server.createContext("/not-found", new NotFoundHandler());
 
         // Set up context for serving other endpoints
-        server.createContext("/", new NotFoundHandler());
+        server.createContext("/", new AdminHandler());
         // start server
         server.start();
         System.out.println("Server started on port 8000");

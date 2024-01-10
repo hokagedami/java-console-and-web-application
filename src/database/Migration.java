@@ -14,13 +14,13 @@ public class Migration {
      * Constructor
      */
     public Migration() {
-        deleteDatabase();
+//        deleteDatabase();
         createTables();
     }
 
     public Migration(String databaseFileName) {
         DATABASE_FILE_NAME = databaseFileName;
-        deleteDatabase();
+//        deleteDatabase();
         createTables();
     }
 
@@ -44,8 +44,8 @@ public class Migration {
                 String sql = "CREATE TABLE IF NOT EXISTS customers " +
                         "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
                         " businessName TEXT NOT NULL, telephone TEXT NOT NULL," +
-                        " addressLine1 TEXT NOT NULL, addressLine2 TEXT NOT NULL," +
-                        " addressLine3 TEXT NOT NULL, country TEXT NOT NULL, " +
+                        " addressLine1 TEXT NOT NULL, addressLine2 TEXT NULL," +
+                        " addressLine3 TEXT NOT NULL, country TEXT NULL, " +
                         "postCode TEXT NOT NULL)";
 
                 Statement stmt = conn.createStatement();

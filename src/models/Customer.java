@@ -32,6 +32,16 @@ public class Customer {
         String addressLine3 = address.getAddressLine3();
         String country = address.getCountry();
         String postCode = address.getPostCode();
+
+        if(addressLine2.isBlank() && addressLine3.isBlank()){
+            return String.format("%s, %s, %s", addressLine1, postCode, country);
+        }
+        else if(addressLine3.isBlank()){
+            return String.format("%s, %s, %s, %s", addressLine1, addressLine2, postCode, country);
+        }
+        else if(addressLine2.isBlank()){
+            return String.format("%s, %s, %s, %s", addressLine1, addressLine3, postCode, country);
+        }
         return String.format("%s, %s, %s, %s, %s",
                 addressLine1, addressLine2, addressLine3, postCode, country);
     }

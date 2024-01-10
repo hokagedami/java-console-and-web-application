@@ -67,8 +67,13 @@ public class NewProductHTMLHandler implements HttpHandler {
                     String expiryDate = expiryDateArray != null && expiryDateArray.length > 1
                             ? expiryDateArray[1] : "";
                     if (errorMessage != null) {
+                        StringBuilder errorString = new StringBuilder("<ul>\n");
+                        var errorMessages = errorMessage.split("#");
+                        for (String error : errorMessages) {
+                            errorString.append("<li id=errorMessage class=\"col\">").append(error).append("</li>");
+                        }
                         var errorHtml = "<div class=\"alert alert-danger alert-dismissible fade show errorDiv\" role=\"alert\">\n" +
-                                "        <span id=\"errorMessage\">"+ errorMessage +"</span>\n" +
+                                "        <span id=\"errorMessage\">"+ new String(errorString) +"</span>\n" +
                                 "        <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\" onclick=\"closeErrorDiv()\"></button>\n" +
                                 "    </div>";
                         response = response.replace("{{errorMessage}}", errorHtml);

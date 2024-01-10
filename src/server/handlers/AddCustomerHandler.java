@@ -5,13 +5,14 @@ import com.sun.net.httpserver.HttpHandler;
 import methods.customers.CustomerDAO;
 import models.Address;
 import models.Customer;
-import models.User;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 import static server.helpers.HandlerHelpers.VerifyUserIsAdmin;
 
@@ -21,7 +22,6 @@ import static server.helpers.HandlerHelpers.VerifyUserIsAdmin;
  * Only valid for Admin users. Redirects to /admin for login if user is not admin.
  */
 public class AddCustomerHandler implements HttpHandler {
-    User admin = new User("admin", "admin");
     CustomerDAO customerDAO;
 
     /**
@@ -69,19 +69,28 @@ public class AddCustomerHandler implements HttpHandler {
             var telephoneArray = bodyArray[6].split("=");
             String telephone = telephoneArray.length > 1 ? telephoneArray[1] : "";
 
+            List<String> errors = new ArrayList<>();
 
-            if (!businessName.isBlank() && !addressLine1.isBlank() && !addressLine2.isBlank() &&
-                    !addressLine3.isBlank() && !postCode.isBlank() && !country.isBlank() && !telephone.isBlank()) {
-                Address address = new Address(addressLine1, addressLine2, addressLine3, country, postCode);
-                Customer customer = new Customer(address, telephone, businessName);
-                this.customerDAO.addCustomer(customer);
-                exchange.getResponseHeaders().add("Location", "/customers");
-                exchange.sendResponseHeaders(302, 0);
+            if (businessName.isBlank()) {
+                errors.add("Business name is required");
             }
-            else {
+            if (addressLine1.isBlank()) {
+                errors.add("Address line 1 is required");
+            }
+            if(postCode.isBlank()) {
+                errors.add("Post code is required");
+            }
+            if (country.isBlank() || country.equals("Select Country")) {
+                errors.add("Country is required");
+            }
+            if (telephone.isBlank()) {
+                errors.add("Telephone number is required");
+            }
+
+            if(!errors.isEmpty()) {
                 // Make request to edit page with error message
                 // encode error message and request parameters
-                var query = "errorMessage=" + "Please fill in all fields" +
+                var query = "errorMessage=" + String.join("#", errors) +
                         "&businessName=" + businessName +
                         "&addressLine1=" + addressLine1 +
                         "&addressLine2=" + addressLine2 +
@@ -93,7 +102,13 @@ public class AddCustomerHandler implements HttpHandler {
                 exchange.getResponseHeaders().add("Location",
                         "/customer/new?errorMessage=" + encodedQuery);
                 exchange.sendResponseHeaders(302, 0);
+                return;
             }
+            Address address = new Address(addressLine1, addressLine2, addressLine3, country, postCode);
+            Customer customer = new Customer(address, telephone, businessName);
+            this.customerDAO.addCustomer(customer);
+            exchange.getResponseHeaders().add("Location", "/customers");
+            exchange.sendResponseHeaders(302, 0);
         }
     }
 }

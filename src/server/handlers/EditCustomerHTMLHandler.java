@@ -7,7 +7,6 @@ import models.Customer;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Arrays;
 import java.util.Base64;
 
 import static server.helpers.HandlerHelpers.VerifyUserIsAdmin;
@@ -44,12 +43,63 @@ public class EditCustomerHTMLHandler implements HttpHandler {
                 exchange.sendResponseHeaders(302, 0);
                 return;
             }
+            var idStr = "";
             if (in == null) {
                 System.out.println("File not found");
                 exchange.sendResponseHeaders(404, 0);
             } else {
                 System.out.println("Edit customer page html file found");
-                String idStr = exchange.getRequestURI().toString().split("/")[3];
+                var query = exchange.getRequestURI().getQuery();
+                StringBuilder errorStrBuilder = new StringBuilder("<ul>\n");
+                if(query != null) {
+                    var queryArray = query.split("&");
+                    if (queryArray.length < 2) {
+                        //redirect to customers page
+                        exchange.getResponseHeaders().add("Location", "/customers");
+                        exchange.sendResponseHeaders(302, 0);
+                        return;
+                    }
+                    var idStrQuery = queryArray[0].split("=");
+                    idStr = idStrQuery.length > 1 && idStrQuery[1].isBlank() ? "" : idStrQuery[1];
+
+                    if (idStr.isBlank()) {
+                        //redirect to customers page
+                        exchange.getResponseHeaders().add("Location", "/customers");
+                        exchange.sendResponseHeaders(302, 0);
+                        return;
+                    }
+
+                    var pathQuery = queryArray[1].split("=");
+                    var errorStr = pathQuery.length > 1 && pathQuery[1].isBlank() ? "" : pathQuery[1];
+                    if(!errorStr.isBlank()) {
+                        var errorStrDecoded = new String(Base64.getDecoder().decode(errorStr));
+                        var errorArray = errorStrDecoded.split("&");
+                        for (var error : errorArray) {
+                            // error message
+                            if(error.contains("errorMessage")) {
+                                var errorMessageQuery = error.split("=");
+                                var errorMsgArray = errorMessageQuery.length > 1
+                                        && errorMessageQuery[1].isBlank() ? null : errorMessageQuery[1].split("#");
+                                if(errorMsgArray != null && errorMsgArray.length > 0) {
+                                   for (var errorMsg : errorMsgArray) {
+                                       errorStrBuilder.append("<li id=errorMessage class=\"col\">")
+                                               .append(errorMsg)
+                                               .append("</li>\n");
+                                   }
+                                   errorStrBuilder.append("</ul>");
+                                }
+                                else {
+                                    errorStrBuilder = new StringBuilder();
+                                }
+                            }
+                            else {
+                                break;
+                            }
+                        }
+                    }
+                }
+                else
+                    idStr = exchange.getRequestURI().toString().split("/")[3];
                 int productId = Integer.parseInt(idStr);
                 Customer customer = customerDAO.findCustomerByID(productId);
                 if (customer == null) {
@@ -61,30 +111,14 @@ public class EditCustomerHTMLHandler implements HttpHandler {
                 byte[] responseBytes = getBytesFromInputStream(in);
                 String response = new String(responseBytes);
 
-                // get error message from cookie
-                String cookie = exchange.getRequestHeaders().getFirst("Cookie");
-                if(cookie != null)
-                {
-                    String[] split = cookie.split(";");
-                    var tokenCookie = Arrays
-                            .stream(split)
-                            .filter(s -> s.contains("errorMessage"))
-                            .findFirst()
-                            .orElse(null);
-                    if(tokenCookie != null){
-                        String encodedError = tokenCookie.split("=")[1];
-                        String errorMessage = new String(Base64.getDecoder().decode(encodedError));
-                        var errorHtml = "<div class=\"alert alert-danger alert-dismissible fade show errorDiv\" role=\"alert\">\n" +
-                                "        <span id=\"errorMessage\">"+ errorMessage +"</span>\n" +
-                                "        <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\" onclick=\"closeErrorDiv()\"></button>\n" +
-                                "    </div>";
-                        response = response.replace("{{errorMessage}}", errorHtml);
-                    }
-                    else
-                    {
-                        response = response.replace("{{errorMessage}}", "");
+                // replace {{errorMessage}} with error message div if there is one
 
-                    }
+                if(query != null && !errorStrBuilder.isEmpty()) {
+                    var errorHtml = "<div class=\"col alert alert-danger alert-dismissible fade show errorDiv\" role=\"alert\">\n" +
+                            "        " + new String(errorStrBuilder) + "\n" +
+                            "        <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\" onclick=\"closeErrorDiv()\"></button>\n" +
+                            "    </div>";
+                    response = response.replace("{{errorMessage}}", errorHtml);
                 }
                 else {
                     response = response.replace("{{errorMessage}}", "");

@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 import static server.helpers.HandlerHelpers.VerifyUserIsAdmin;
 
@@ -65,24 +67,48 @@ public class UpdateCustomerHandler implements HttpHandler{
             var telephoneArray = bodyArray[7].split("=");
             String telephone = telephoneArray.length > 1 ? telephoneArray[1] : "";
 
-            if (!idStr.isBlank() && !businessName.isBlank() && !addressLine1.isBlank() && !addressLine2.isBlank() &&
-                    !addressLine3.isBlank() && !postCode.isBlank() && !country.isBlank() && !telephone.isBlank()) {
-                int id = Integer.parseInt(idStr);
-                Address address = new Address(addressLine1, addressLine2, addressLine3, postCode, country);
-                CustomerToUpdate customer = new CustomerToUpdate(address, telephone, businessName);
-                customerDAO.updateCustomer(customer, id);
-                exchange.getResponseHeaders().add("Location", "/customers");
-                exchange.sendResponseHeaders(302, 0);
+            List<String> errors = new ArrayList<>();
+
+            if (businessName.isBlank()) {
+                errors.add("Business name is required");
             }
-            else {
-                // Redirect to edit page
-                var query = "Please fill in all fields!";
+            if (addressLine1.isBlank()) {
+                errors.add("Address line 1 is required");
+            }
+            if (postCode.isBlank()) {
+                errors.add("Post code is required");
+            }
+            if (country.isBlank()) {
+                errors.add("Country is required");
+            }
+            if (telephone.isBlank()) {
+                errors.add("Telephone is required");
+            }
+
+            if(!errors.isEmpty()) {
+                // Make request to edit page with error message
+                // encode error message and request parameters
+                var query = "errorMessage=" + String.join("#", errors) +
+                        "&businessName=" + businessName +
+                        "&addressLine1=" + addressLine1 +
+                        "&addressLine2=" + addressLine2 +
+                        "&addressLine3=" + addressLine3 +
+                        "&postCode=" + postCode +
+                        "&country=" + country +
+                        "&telephone=" + telephone;
                 var encodedQuery = Base64.getEncoder().encodeToString(query.getBytes());
-                // add error message to cookie
-                exchange.getResponseHeaders().add("Set-Cookie", encodedQuery);
-                exchange.getResponseHeaders().add("Location", "/customers/edit/" + idStr);
+                exchange.getResponseHeaders().add("Location",
+                        "/customers/edit?id="+ idStr + "&errorMessage=" + encodedQuery);
                 exchange.sendResponseHeaders(302, 0);
+                return;
             }
+
+            int id = Integer.parseInt(idStr);
+            Address address = new Address(addressLine1, addressLine2, addressLine3, postCode, country);
+            CustomerToUpdate customer = new CustomerToUpdate(address, telephone, businessName);
+            customerDAO.updateCustomer(customer, id);
+            exchange.getResponseHeaders().add("Location", "/customers");
+            exchange.sendResponseHeaders(302, 0);
         }
     }
 }

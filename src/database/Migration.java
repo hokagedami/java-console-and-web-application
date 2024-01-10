@@ -14,11 +14,13 @@ public class Migration {
      * Constructor
      */
     public Migration() {
+        deleteDatabase();
         createTables();
     }
 
     public Migration(String databaseFileName) {
         DATABASE_FILE_NAME = databaseFileName;
+        deleteDatabase();
         createTables();
     }
 

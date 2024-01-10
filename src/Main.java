@@ -47,6 +47,7 @@ public class Main {
                     } else if (option.equalsIgnoreCase("B")) {
                         customerConsoleHelper.runConsoleApp();
                     } else {
+                        migration.deleteDatabase();
                         System.out.println("Exiting...");
                         System.exit(0);
                     }

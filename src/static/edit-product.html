@@ -32,6 +32,7 @@
 </nav>
 <div class="container-fluid mx-5 my-3" style="width: 80%">
     <h1>Edit Product</h1>
+    {{errorMessage}}
     <hr>
     <form action="/products/update" method="post" class="row g-3">
         <div class="hide">
@@ -84,4 +85,9 @@
     </form>
 </div>
 </body>
+<script>
+    function closeErrorDiv() {
+        document.querySelector('.errorDiv').style.display = 'none';
+    }
+</script>
 </html>

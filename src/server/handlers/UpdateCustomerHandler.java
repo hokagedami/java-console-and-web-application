@@ -88,14 +88,7 @@ public class UpdateCustomerHandler implements HttpHandler{
             if(!errors.isEmpty()) {
                 // Make request to edit page with error message
                 // encode error message and request parameters
-                var query = "errorMessage=" + String.join("#", errors) +
-                        "&businessName=" + businessName +
-                        "&addressLine1=" + addressLine1 +
-                        "&addressLine2=" + addressLine2 +
-                        "&addressLine3=" + addressLine3 +
-                        "&postCode=" + postCode +
-                        "&country=" + country +
-                        "&telephone=" + telephone;
+                var query = "errorMessage=" + String.join("#", errors);
                 var encodedQuery = Base64.getEncoder().encodeToString(query.getBytes());
                 exchange.getResponseHeaders().add("Location",
                         "/customers/edit?id="+ idStr + "&errorMessage=" + encodedQuery);

@@ -46,7 +46,9 @@ public class EditCustomerHTMLHandler implements HttpHandler {
             var idStr = "";
             if (in == null) {
                 System.out.println("File not found");
-                exchange.sendResponseHeaders(404, 0);
+                // redirect to not found page
+                exchange.getResponseHeaders().add("Location", "/not-found");
+                exchange.sendResponseHeaders(302, 0);
             } else {
                 System.out.println("Edit customer page html file found");
                 var query = exchange.getRequestURI().getQuery();

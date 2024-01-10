@@ -10,6 +10,9 @@ import java.io.InputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
 
 import static server.helpers.HandlerHelpers.VerifyUserIsAdmin;
 
@@ -46,13 +49,19 @@ public class UpdateProductHandler implements HttpHandler {
             String body = new String(is.readAllBytes(), StandardCharsets.UTF_8);
 
             String[] split = URLDecoder.decode(body, StandardCharsets.UTF_8).split("&");
-            String idStr = split[0].split("=")[1];
-            String description = split[1].split("=")[1];
-            String category = split[2].split("=")[1];
-            String priceStr = split[3].split("=")[1];
-            Date expiryDate = Date.valueOf(split[4].split("=")[1]);
+            var idArray = split[0].split("=");
+            String idStr = idArray.length > 1 ? idArray[1] : "";
+            var descriptionArray = split[1].split("=");
+            String description = descriptionArray.length > 1 ? descriptionArray[1] : "";
+            var categoryArray = split[2].split("=");
+            String category = categoryArray.length > 1 ? categoryArray[1] : "";
+            var priceArray = split[3].split("=");
+            String priceStr = priceArray.length > 1 ? priceArray[1] : "";
+            var expiryDateArray = split[4].split("=");
+            Date expiryDate = expiryDateArray.length > 1 ? Date.valueOf(expiryDateArray[1]) : null;
 
-            if (idStr != null && description != null && category != null && priceStr != null && expiryDate != null) {
+            if (!idStr.isBlank() && !description.isBlank()
+                    && !category.isBlank() && !priceStr.isBlank() && expiryDate != null) {
                 int id = Integer.parseInt(idStr);
                 int price = Integer.parseInt(priceStr);
                 // Update product
@@ -69,7 +78,25 @@ public class UpdateProductHandler implements HttpHandler {
             }
             else {
                 // Redirect to edit page
-                exchange.getResponseHeaders().add("Location", "/products/edit/" + idStr);
+                List<String> errors = new ArrayList<>();
+                if (idStr.isBlank()) {
+                    errors.add("id");
+                }
+                if (description.isBlank()) {
+                    errors.add("Description is required");
+                }
+                if (category.isBlank()) {
+                    errors.add("Category is required");
+                }
+                if (priceStr.isBlank()) {
+                    errors.add("Price is required");
+                }
+                if (expiryDate == null) {
+                    errors.add("Expiry date is required");
+                }
+                var query = "errorMessage=" + String.join("#", errors);
+                var encodedQuery = Base64.getEncoder().encodeToString(query.getBytes());
+                exchange.getResponseHeaders().add("Location", "/products/edit?id=" + idStr + "&errorMessage=" + encodedQuery);
                 exchange.sendResponseHeaders(302, 0);
             }
         }

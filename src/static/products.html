@@ -80,11 +80,6 @@
                 <div class="col">
                     <button type="submit" class="btn btn-success">Search/Filter</button>
                 </div>
-                <div class="col">
-                    <a href="/products" class="btn btn-danger">
-                        Clear
-                    </a>
-                </div>
             </div>
         </form>
         {{searchFilterView}}
@@ -98,9 +93,13 @@
         <br>
         {{addButton}}
     </div>
+    <script src="/bootstrap/js/bootstrap.bundle.js"></script>
+    <script>
+        function closeFilterParamsDiv() {
+            // redirect to /products
+            window.location.href = "/products";
+        }
+    </script>
 </div>
-<script>
-<!--    -->
-</script>
 </body>
 </html>

@@ -52,7 +52,9 @@ public class EditProductHTMLHandler implements HttpHandler {
                 int productId = Integer.parseInt(idStr);
                 Product product = productDAO.findProduct(productId);
                 if (product == null) {
-                    exchange.sendResponseHeaders(404, 0);
+                    //redirect to not found page
+                    exchange.getResponseHeaders().add("Location", "/not-found");
+                    exchange.sendResponseHeaders(302, 0);
                     return;
                 }
                 byte[] responseBytes = getBytesFromInputStream(in);

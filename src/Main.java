@@ -3,7 +3,7 @@ import methods.customers.CustomerDAO;
 import methods.customers.CustomerConsoleHelper;
 import methods.products.ProductDAO;
 import methods.products.ProductConsoleHelper;
-import methods.products.SessionDAO;
+import methods.session.SessionDAO;
 import server.Server;
 
 import java.util.Scanner;

@@ -53,7 +53,9 @@ public class EditCustomerHTMLHandler implements HttpHandler {
                 int productId = Integer.parseInt(idStr);
                 Customer customer = customerDAO.findCustomerByID(productId);
                 if (customer == null) {
-                    exchange.sendResponseHeaders(404, 0);
+                    //redirect to not found page
+                    exchange.getResponseHeaders().add("Location", "/not-found");
+                    exchange.sendResponseHeaders(302, 0);
                     return;
                 }
                 byte[] responseBytes = getBytesFromInputStream(in);

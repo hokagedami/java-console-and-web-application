@@ -1,4 +1,4 @@
-package methods.products;
+package methods.session;
 
 import database.Migration;
 import models.Session;

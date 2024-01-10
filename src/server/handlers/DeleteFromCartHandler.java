@@ -3,7 +3,7 @@ package server.handlers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import methods.products.ProductDAO;
-import methods.products.SessionDAO;
+import methods.session.SessionDAO;
 
 import java.io.IOException;
 import java.util.Arrays;

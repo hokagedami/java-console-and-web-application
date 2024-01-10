@@ -10,22 +10,79 @@ The application also has a simple web interface that allows the user to view the
 The project has the following structure:
 ```
 ├───lib
+|   ├───hamcrest-core-1.3.jar
+|   ├───hamcrest-core-1.3-javadoc.jar
+|   ├───hamcrest-core-1.3-sources.jar
+|   ├───junit-4.13.1.jar
+|   ├───junit-4.13.1-javadoc.jar
+|   ├───junit-4.13.1-sources.jar
+|   ├───slf4j-api-2.0.9.jar
+|   ├───slf4j-nop-2.0.9.jar
+|   └───sqlite-jdbc-3.43.2.1.jar
 ├───src
 │   ├───database
+|   │   ├───Migration.java
 │   ├───methods
+│   │   ├───customers
+│   │   │   ├───CustomerConsoleHelper.java
+│   │   │   └───CustomerDAO.java
+│   │   ├───products
+│   │   │   ├───ProductConsoleHelper.java
+│   │   │   └───ProductDAO.java
+│   │   └───session
+│   │       └───SessionDAO.java
 │   ├───models
+│   │   ├───Address.java
+│   │   ├───Customer.java
+│   │   ├───CustomerToUpdate.java
+│   │   ├───Product.java
+│   │   ├───ProductToUpdate.java
+│   │   └───Session.java
+│   │   └───User.java
 │   ├───server
 │   │   ├───handlers
+│   │   │   ├───AddCustomerHandler.java
+│   │   │   ├───AddProductHandler.java
+│   │   │   ├───AddToCartHandler.java
+│   │   │   ├───AdminHandler.java
+│   │   │   ├───BootstrapHandler.java
+│   │   │   ├───CartHTMLHandler.java
+│   │   │   ├───CustomersHTMLHandler.java
+│   │   │   ├───DeleteCustomerHandler.java
+│   │   │   ├───DeleteFromCartHandler.java
+│   │   │   ├───DeleteProductHandler.java
+│   │   │   ├───EditCustomerHTMLHandler.java
+│   │   │   ├───EditProductHTMLHandler.java
+│   │   │   ├───NewCustomerHTMLHandler.java
+│   │   │   ├───NewProductHTMLHandler.java
+│   │   │   ├───NotFoundHandler.java
+│   │   │   ├───ProductsHTMLHandler.java
+│   │   │   ├───StaticResourceHandler.java
+│   │   │   ├───UpdateCustomerHandler.java
+│   │   │   └───UpdateProductHandler.java
 │   │   └───methods
+│   │       ├───HandlerHelpers.java
+│   │       └───HtmlHelpers.java
+│   ├───Server.java
 │   ├───static
 │   │   └───bootstrap
 │   │       ├───css
 │   │       └───js
 │   └───tests
-
-lib - contains the SQLite JDBC driver and other dependencies
-src - contains the source code
+│       ├───CustomerTest.java
+│       └───ProductTest.java
+└───Main.java
 ```
+
+# Libraries
+The project uses the following libraries:
+- [JUnit](https://junit.org/junit5/) - for unit testing
+- [SQLite JDBC](https://github.com/xerial/sqlite-jdbc/releases) - for database connection
+- [SLF4J](http://www.slf4j.org/) - for logging
+- [Hamcrest](http://hamcrest.org/JavaHamcrest/) - for unit testing
+- [Bootstrap](https://getbootstrap.com/) - for web interface
+- [jQuery](https://jquery.com/) - for web interface
+
 
 ### How to run
 1. Clone the repository

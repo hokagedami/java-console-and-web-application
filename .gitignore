@@ -30,3 +30,5 @@ bin/
 /.idea/
 
 /src/db.sqlite
+/java-console-and-web-application.iml
+src/META-INF/

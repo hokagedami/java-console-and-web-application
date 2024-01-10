@@ -3,7 +3,7 @@ package server;
 import com.sun.net.httpserver.HttpServer;
 import methods.customers.CustomerDAO;
 import methods.products.ProductDAO;
-import methods.products.SessionDAO;
+import methods.session.SessionDAO;
 import server.handlers.*;
 
 import java.io.IOException;
@@ -30,7 +30,6 @@ public class Server {
         HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
 
         // Set up context for serving admin.html
-        server.createContext("/", new ProductsHTMLHandler(productDAO, sessionDAO));
 
         // Set up context for bootstrap files
         server.createContext("/bootstrap", new BootstrapHandler());
@@ -64,6 +63,8 @@ public class Server {
         // Set up context for serving not found page
         server.createContext("/not-found", new NotFoundHandler());
 
+        // Set up context for serving other endpoints
+        server.createContext("/", new NotFoundHandler());
         // start server
         server.start();
         System.out.println("Server started on port 8000");

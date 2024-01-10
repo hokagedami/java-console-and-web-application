@@ -138,7 +138,8 @@ public class HtmlHelper {
     public static String generateProductCategoryCheckboxes(List<Product> products) {
         StringBuilder htmlBuilder = new StringBuilder();
         var categories = products.stream().map(Product::getCategory).distinct().toList();
-        for (var category : categories) {
+        for (int i = 0; i < categories.size(); i++) {
+            var category = categories.get(i);
             String listItem = String.format("""
                     <li>
                         <label class="form-check-label" for="%s">
@@ -146,9 +147,9 @@ public class HtmlHelper {
                         </label>
                         <span>%s</span>
                     </li>""",
-                    "category_"+categories.indexOf(category),
-                    "category_"+categories.indexOf(category),
-                    "category_"+categories.indexOf(category), category, category);
+                    "category_"+ i,
+                    "category_"+ i,
+                    "category_"+i, category, category);
             htmlBuilder.append(listItem);
         }
         return htmlBuilder.toString();
@@ -209,7 +210,7 @@ public class HtmlHelper {
     }
 
     public static String generateFilterAndSearchViewHtml(List<String> categories, String description, String expiryDate){
-        String htmlBuilder = "<div class=\"row\">{{description}}{{categories}}{{expiryDate}}</div>";
+        String htmlBuilder = "<div class=\"row\">{{description}}{{categories}}{{expiryDate}} {{clear}}</div>";
         if(categories.isEmpty() && description.isEmpty() && expiryDate == null){
             return "";
         }
@@ -222,9 +223,14 @@ public class HtmlHelper {
         var categoriesHtml = !categories.isEmpty() ? "<div class=\"col\">\n" +
                 "<b>Category: </b><p class=\"text-danger\">" + String.join(", ", categories) + "</p>\n" +
                 "</div>\n" : "<div class=\"col\">\n</div>\n";
+        var clearHtml = """
+                <div class="col"><button type="button" class="btn-close" data-bs-dismiss="alert"
+                arial-label="Close" onclick="closeFilterParamsDiv()"></button></div>
+                """;
         htmlBuilder = htmlBuilder.replace("{{description}}", descriptionHtml);
         htmlBuilder = htmlBuilder.replace("{{categories}}", categoriesHtml);
         htmlBuilder = htmlBuilder.replace("{{expiryDate}}", expiryDateHtml);
+        htmlBuilder = htmlBuilder.replace("{{clear}}", clearHtml);
         return htmlBuilder;
     }
 }
